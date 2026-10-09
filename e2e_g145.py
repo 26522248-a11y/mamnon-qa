@@ -4,6 +4,7 @@ Chạy: python e2e_g145.py [WEB] [API] [GV u:p] [ADMIN u:p] [PH u:p]  (mặc đ�
 [ghi] điểm danh 1 bé 'có mặt', tạo 1 người đón 'QA G4 …' đã duyệt. Không bấm giao bé."""
 import sys,re,uuid,datetime,requests
 from playwright.sync_api import sync_playwright
+import os;sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)));from qa_login import answer_consent
 a=sys.argv+[None]*6
 U=a[1] or "http://localhost:3000";B=a[2] or "http://localhost:3001/api/v1"
 import os; S="/workspace/qa/shots/g145"; os.makedirs(S,exist_ok=True)
@@ -68,7 +69,7 @@ with sync_playwright() as pw:
         for n in ["G4-04 nút giao bấm được","G4-05 SĐT","G4-06 📞","G4-07 nhắc chụp ảnh lần đầu"]: rec(n,False,"không thấy thẻ người đón "+pn)
     # U11: PH thấy nút '🏠 Con nghỉ hôm nay' nền peach, cao ~56px (bé chưa điểm danh hôm nay)
     pc=b.new_context(viewport={"width":390,"height":844}); q=pc.new_page()
-    q.goto(U+"/login",timeout=90000); q.fill("input[autocomplete=username]",PH[0]); q.fill("input[type=password]",PH[1]); q.click("button"); q.wait_for_timeout(4000)
+    q.goto(U+"/login",timeout=90000); q.fill("input[autocomplete=username]",PH[0]); q.fill("input[type=password]",PH[1]); q.click("button"); q.wait_for_timeout(4000); answer_consent(q)
     q.goto(U+"/today"); q.wait_for_timeout(3500); ab=q.locator("[data-testid=btn-absent-today]")
     if ab.count():
         st=ab.first.evaluate("e=>{const s=getComputedStyle(e),r=e.getBoundingClientRect();return {bg:s.backgroundColor,h:r.height,w:r.width,fw:s.fontWeight,t:e.innerText}}"); q.screenshot(path=S+"/U11-today-390.png",full_page=True)

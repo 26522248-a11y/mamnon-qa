@@ -2,13 +2,14 @@
 Chạy: python e2e_u234.py [WEB] [API] [PH_USER] [PH_PASS]   (mặc định local, ph1/123456)"""
 import sys,re,requests,datetime
 from playwright.sync_api import sync_playwright
+import os;sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)));from qa_login import answer_consent
 a=sys.argv+[None]*5
 U=a[1] or "http://localhost:3000";B=a[2] or "http://localhost:3001/api/v1";PU=a[3] or "ph1";PP=a[4] or "123456";R=[]
 def rec(n,ok,i=""): R.append((n,"PASS" if ok else "FAIL",str(i)[:200]));print(R[-1],flush=True)
 T=requests.post(B+"/auth/login",json={"username":PU,"password":PP}).json()["accessToken"];H={"Authorization":"Bearer "+T}
 kid=requests.get(B+"/children",headers=H).json()["items"][0]
 def login(b):
-    p=b.new_page(viewport={"width":390,"height":844}); p.goto(U+"/login"); p.fill("input[autocomplete=username]",PU); p.fill("input[type=password]",PP); p.click("button"); p.wait_for_timeout(3000); return p
+    p=b.new_page(viewport={"width":390,"height":844}); p.goto(U+"/login"); p.fill("input[autocomplete=username]",PU); p.fill("input[type=password]",PP); p.click("button"); p.wait_for_timeout(3000); answer_consent(p); return p
 with sync_playwright() as pw:
     b=pw.chromium.launch(executable_path="/usr/bin/google-chrome"); p=login(b); p.goto(U+"/today"); p.wait_for_timeout(2500); t=p.inner_text("body")
     # U2

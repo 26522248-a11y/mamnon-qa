@@ -2,6 +2,7 @@
 Chạy: python e2e_phcopy.py [WEB] [API] [PH_USER] [PH_PASS] [SHOTS]   (mặc định local :3002, ph1/123456)"""
 import sys,re,json,requests
 from playwright.sync_api import sync_playwright
+import os;sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)));from qa_login import answer_consent
 a=sys.argv+[None]*6
 U=a[1] or "http://localhost:3002";B=a[2] or "http://localhost:3001/api/v1";PU=a[3] or "ph1";PP=a[4] or "123456";S=a[5] or "/workspace/phcopy-shots";R=[]
 def rec(n,ok,i=""): R.append((n,"PASS" if ok else "FAIL",str(i)[:300]));print(R[-1],flush=True)
@@ -16,7 +17,7 @@ def page(b,w,h,denied=False):
     ctx=b.new_context(viewport={"width":w,"height":h})
     if denied:
         ctx.add_init_script(INIT); ctx.route("**/push/vapid-public-key",lambda r:r.fulfill(status=200,content_type="application/json",body=VAPID))
-    p=ctx.new_page(); p.goto(U+"/login"); p.fill("input[autocomplete=username]",PU); p.fill("input[type=password]",PP); p.click("button"); p.wait_for_timeout(3500); return p
+    p=ctx.new_page(); p.goto(U+"/login"); p.fill("input[autocomplete=username]",PU); p.fill("input[type=password]",PP); p.click("button"); p.wait_for_timeout(3500); answer_consent(p); return p
 def go(p,path,wait=2500): p.goto(U+path); p.wait_for_timeout(wait); return p.inner_text("body")
 def ovf(p): return p.evaluate("()=>document.documentElement.scrollWidth-document.documentElement.clientWidth")
 BAD=re.compile(r"căn cước|BMI|Cabin cước",re.I)
