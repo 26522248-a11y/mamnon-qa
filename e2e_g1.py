@@ -1,5 +1,5 @@
 """G1: lưu điểm danh → khung mint '✓ Đã lưu điểm danh (n bé)' vẫn còn sau ~3s, n đúng số bé đã đổi; lỗi lưu → khung rose. Khổ 390px.
-Chạy: python e2e_g1.py [WEB] [GV u:p] [SHOTS]  (mặc định :3002, gv1:123456). [ghi] đổi 2 bé Có mặt→Đi muộn (G14: chạm→Vắng, att-why, att-late) rồi trả lại Có mặt (2 chạm)."""
+Chạy: python e2e_g1.py [WEB] [GV u:p] [SHOTS]  (mặc định :3002, gv1:123456). [ghi] đổi 2 bé Có mặt→Đi muộn (G14: chạm→Vắng, att-why, att-late) rồi trả lại Có mặt (1 chạm)."""
 import sys,re,os
 from playwright.sync_api import sync_playwright
 a=sys.argv+[None]*4
@@ -30,9 +30,8 @@ with sync_playwright() as pw:
     save_and_check(p,"01",len(pres))
     rec("G1-01d sau lưu, các bé hiện 'Đi muộn' (dữ liệu đã tải lại)",all(rows.nth(i).get_attribute("data-status")=="late" for i in pres))
     o=p.evaluate("()=>document.documentElement.scrollWidth-document.documentElement.clientWidth"); rec("OVF[390] /attendance không tràn ngang (có khung Đã lưu)",o<=0,f"scrollWidth-clientWidth={o}")
-    # trả lại Có mặt (G14: Đi muộn→Vắng→Có mặt = 2 chạm)
-    for i in pres:
-        for _ in range(2): rows.nth(i).locator("button").first.click(); p.wait_for_timeout(150)
+    # trả lại Có mặt (G14 e72bfb6: Đi muộn chạm 1 lần → Có mặt)
+    for i in pres: rows.nth(i).locator("button").first.click(); p.wait_for_timeout(150)
     save_and_check(p,"02",len(pres))
     # lỗi: chặn request lưu
     p.route(re.compile(r".*/classes/[^/]+/attendance$"),lambda r: r.abort() if r.request.method=="PUT" else r.continue_())
