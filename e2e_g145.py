@@ -35,7 +35,7 @@ with sync_playwright() as pw:
     rec("G5-02a /home không có chữ 'Ca sáng'","Ca sáng" not in t)
     g.goto(U+"/staff"); g.wait_for_timeout(3000); t=g.inner_text("body")
     rec("G5-02 /staff không còn chữ 'Ca sáng'","Ca sáng" not in t)
-    # G1: lưu điểm danh hiện 'Đã lưu'
+    # G1: lưu điểm danh hiện 'Đã lưu' (G14: bé 'Chưa điểm' 1 chạm → Có mặt, không hộp thoại)
     g.goto(U+"/attendance"); g.wait_for_timeout(3000)
     rows=g.locator("[data-testid=att-row]"); idx=[i for i in range(rows.count()) if "Chưa điểm" in rows.nth(i).inner_text()]
     if idx:
