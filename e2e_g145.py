@@ -1,5 +1,5 @@
 """Góp ý giáo viên: G1 'Đã lưu' sau điểm danh, G4 giao bé không bắt tick đối chiếu (+SĐT, 📞, nhắc chụp ảnh lần đón đầu),
-G5 trang đầu GV /home (teacher-home, btn-checkin, home-att, home-meds) + 'Ca ngày', U11 nút PH '🏠 Con nghỉ hôm nay' (peach, ~56px). Khổ 390px.
+G5 trang đầu GV /home (teacher-home, home-att, home-meds; nút Vào ca kiểm theo chữ) + 'Ca ngày', U11 nút PH '🏠 Con nghỉ hôm nay' (peach, ~56px). Khổ 390px.
 Chạy: python e2e_g145.py [WEB] [API] [GV u:p] [ADMIN u:p] [PH u:p]  (mặc định local gv1/admin/ph1; PH phải có con ở lớp của GV).
 [ghi] điểm danh 1 bé 'có mặt', tạo 1 người đón 'QA G4 …' đã duyệt. Không bấm giao bé."""
 import sys,re,uuid,datetime,requests
@@ -25,7 +25,7 @@ with sync_playwright() as pw:
     # G5: trang đầu sau đăng nhập là /home có Vào ca/Ra ca
     home=g.url; g.wait_for_selector("[data-testid=teacher-home]",timeout=15000) if "/home" in home else None; t=g.inner_text("body")
     rec("G5-00 GV đăng nhập xong vào /home",home.split("?")[0].rstrip("/").endswith("/home"),home)
-    for tid in ["teacher-home","btn-checkin","home-att","home-meds"]:
+    for tid in ["teacher-home","home-att","home-meds"]:  # btn-checkin chỉ còn ở /staff (G11); nút Vào ca trang đầu kiểm ở G5-01 theo chữ
         rec(f"G5-T {tid} hiển thị",g.locator(f"[data-testid={tid}]").count()>0 and g.locator(f"[data-testid={tid}]").first.is_visible())
     bt=g.locator("[data-testid=btn-checkin]"); bt=bt.first.inner_text() if bt.count() else ""
     rec("G5-01 trang đầu GV có nút Vào ca/Ra ca",re.search(r"Vào ca|Ra ca|Đã ra ca",t) is not None,f"btn-checkin='{bt}'")
