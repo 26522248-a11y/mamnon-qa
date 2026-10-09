@@ -26,3 +26,4 @@
 | ALB-04 | PH lớp khác / chưa đăng nhập xem ảnh | 403 / 401 | P0 |
 | ALB-05 | Upload file giả ảnh (exe, txt đổi đuôi), HEIC | 400 / chuyển JPEG | P0 |
 | ALB-06 | GV đăng vào lớp không phụ trách | 403 | P0 |
+| ALB-10 | Đăng 5 ảnh, 1 ảnh có bé chưa đồng ý | 4 ảnh lên đúng 1 lần (không trùng khi cô bấm đăng lại), ảnh lỗi chỉ ra đúng index và tên bé | P1 |
