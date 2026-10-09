@@ -9,3 +9,11 @@ Chuẩn bị: 1 điện thoại phụ huynh (iPhone iOS 16.4+ hoặc Android Chr
 5. **Thử không trả lời.** Tạo yêu cầu thứ hai, phụ huynh không bấm gì. Sau 15 phút, màn cô giáo phải hiện nút gọi số ① rồi ②, và bé tuyệt đối không được tự giao.
 
 Ghi kết quả: loại máy, phiên bản iOS/Android, thời gian nhận thông báo, có ảnh không, bước nào sai (kèm ảnh chụp màn hình).
+
+## Ảnh trên điện thoại thật (B32/B31/B27, thêm 10/10) – khoảng 5 phút, làm cùng buổi G8 sáng thứ Hai
+Máy QA chỉ chạy được Chrome giả lập khổ iPhone, không có Safari/WebKit thật, nên các bước này cần người cầm máy:
+1. iPhone (Safari): giáo viên vào Giao bé, bấm "📷 Chụp ảnh" bằng camera thật → ảnh hiện đúng chiều, gửi được, phụ huynh thấy ảnh.
+2. iPhone: chọn 1 ảnh HEIC từ thư viện cho ảnh người đón và ảnh lớp → gửi được, ảnh hiện đúng chiều.
+3. Android (Chrome): chụp ảnh 6–8 MB (chế độ chất lượng cao) cho ảnh lớp → gửi được trong vài giây trên 4G.
+4. Chứng từ thu chi: chụp hoá đơn bằng điện thoại → tải về vẫn đọc rõ chữ nhỏ.
+5. Sau 1 lần deploy lại backend, mở lại các ảnh trên → vẫn còn (B27, lưu trên Backblaze B2).
