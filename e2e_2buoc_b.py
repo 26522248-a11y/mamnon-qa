@@ -1,6 +1,6 @@
 import requests
 from playwright.sync_api import sync_playwright
-B="http://localhost:3001/api/v1";U="http://localhost:3000";Q="ac105557-e330-443b-bf67-f40bd1cb77e2";R=[]
+B="http://localhost:3001/api/v1";U="http://localhost:3000";Q=open("/workspace/qa/pickup_q.txt").read().strip();R=[]
 def rec(n,ok,i=""): R.append((n,"PASS" if ok else "FAIL",str(i)[:220]));print(R[-1],flush=True)
 G=requests.post(B+"/auth/login",json={"username":"gv1","password":"123456"}).json()["accessToken"]
 st=lambda:requests.get(B+f"/pickup-requests/{Q}",headers={"Authorization":"Bearer "+G}).json()

@@ -8,7 +8,7 @@ kid=requests.get(B+"/children",headers=H(P)).json()["items"][0]; d=datetime.date
 c=requests.get(B+"/classes",headers=H(G)).json(); c=(c.get("items",c) if isinstance(c,dict) else c)[0]["id"]
 a=[i for i in requests.get(B+f"/classes/{c}/attendance?date={d}",headers=H(G)).json()["items"] if i["childId"]==kid["id"]][0]; aid=a.get("attendanceId") or a.get("id")
 #q0=(B+f"/attendance/{aid}/pickup-requests",json={"pickerName":"QA UI Hai Bước","pickerPhone":"0909777888","note":"QA UI","relation":"Cô"},headers=H(G)).json()
-q={"id":"ac105557-e330-443b-bf67-f40bd1cb77e2"}
+q={"id":open("/workspace/qa/pickup_q.txt").read().strip()}
 def login(b,u,pw="123456",mob=True):
     p=b.new_page(viewport={"width":390,"height":844} if mob else {"width":1280,"height":800}); p.goto(U+"/login"); p.fill("input[autocomplete=username]",u); p.fill("input[type=password]",pw); p.click("button"); p.wait_for_timeout(2500); return p
 with sync_playwright() as pw:
