@@ -27,9 +27,9 @@ with sync_playwright() as pw:
         p=page(b,W,Hh)
         # P1
         t=go(p,"/fees",3000); p.screenshot(path=f"{S}/P1-fees-{tag}.png",full_page=True)
-        rows=p.locator("[data-testid=invoice-row]").count(); zero=re.findall(r"(?<![\d.])0\s?đ",t)
+        rows=p.locator("[data-testid=invoice-row]").count(); voidv="Đã hủy" in t; zero=re.findall(r"(?<![\d.])0\s?đ",t)
         rec(f"P1[{tag}] bé đóng đủ (balance={bal['balance']}) chỉ hiện 'Đã đóng đủ', 0 dòng hoá đơn, không '0đ'",
-            "Đã đóng đủ" in t and rows==0 and not zero, f"invoice-row={rows}; 0đ={zero}; HĐ: {[ (i['period'],i['status']) for i in inv]}")
+            "Đã đóng đủ" in t and rows==0 and not zero and not voidv, f"invoice-row={rows}; 0đ={zero}; 'Đã hủy'={voidv}; HĐ: {[ (i['period'],i['status']) for i in inv]}")
         # P2 + overflow
         for path in PAGES:
             t=go(p,path)
@@ -49,6 +49,8 @@ with sync_playwright() as pw:
             hits=sorted({m for x in texts for m in BAD.findall(x)}); slug=path.strip("/").replace("/","_")[:30] or "root"
             if path.startswith("/health") or path.startswith("/pickups/delegates"): p.screenshot(path=f"{S}/P2-{slug}-{tag}.png",full_page=True)
             rec(f"P2[{tag}] {path} không có 'căn cước'/'BMI'",not hits,hits)
+            if path=="/pickups": rec(f"P2c[{tag}] /pickups ghi 'Thêm người đón hộ (tên và số điện thoại)'","(tên và số điện thoại)" in t,re.findall(r"Thêm người đón hộ[^\n]*",t))
+            if path=="/pickups/delegates": bad=re.findall(r"Giấy tờ số …[^\n]*",t); rec(f"P2d[{tag}] không còn 'Giấy tờ số …' (dấu … thừa)",not bad,bad[:2] or re.findall(r"Giấy tờ số[^\n]*",t)[:2])
             if tag=="390": o=ovf(p); rec(f"OVF[390] {path} không tràn ngang",o<=0,f"scrollWidth-clientWidth={o}")
             if path=="/messages":
                 allt="\n".join(texts); up=[x for x in texts if re.search(r"ĐÃ QUA",x)]
@@ -57,7 +59,7 @@ with sync_playwright() as pw:
                 p.locator("[data-testid=msg-tab-absence]").click(); p.wait_for_timeout(1200); at=p.inner_text("body")
                 rec(f"P5[{tag}] tab Nghỉ: có 'Báo trước 8 giờ sáng thì trường trả lại tiền ăn', không 'ĐÃ QUA'","Báo trước 8 giờ sáng thì trường trả lại tiền ăn" in at and "ĐÃ QUA" not in at,
                     re.findall(r"Báo trước[^\n]*",at))
-                rec(f"P5b[{tag}] không còn 'ĐÃ QUA' ở mọi tab /messages",not up,f"tiêu đề lịch sử đang hiện: {caps}")
+                rec(f"P5b[{tag}] không còn 'ĐÃ QUA' ở mọi tab /messages; tab Thuốc/Đón muộn ghi 'Trong 30 ngày qua'",not up and all(c.strip()=="Trong 30 ngày qua" for c in caps if c.strip()!="" and not c.startswith("Báo trước")),f"tiêu đề lịch sử đang hiện: {caps}")
         # P4
         t=go(p,"/today",3000); btn=p.locator("button:has-text('Con nghỉ hôm nay')")
         here=any(x["date"]==__import__('datetime').datetime.now(__import__('datetime').timezone(__import__('datetime').timedelta(hours=7))).strftime("%Y-%m-%d") and x["status"]=="present" for x in att)
