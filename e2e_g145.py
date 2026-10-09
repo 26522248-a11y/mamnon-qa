@@ -44,6 +44,9 @@ with sync_playwright() as pw:
             g.wait_for_timeout(300)
             if "Đã lưu" in g.inner_text("body"): seen=True; break
         rec("G1-01 lưu điểm danh hiện '✓ Đã lưu'",seen)
+        g.wait_for_timeout(3000); m=g.locator("[data-testid=att-msg]")
+        mt=m.first.inner_text() if m.count() and m.first.is_visible() else ""; mc=m.first.get_attribute("class") if m.count() else ""
+        rec("G1-02 sau ~3s vẫn còn khung mint '✓ Đã lưu điểm danh (1 bé)'",mt.startswith("✓ Đã lưu điểm danh (1 bé)") and "bg-mint" in (mc or ""),f"'{mt}' class={mc}")
     else: rec("G1-01 lưu điểm danh hiện '✓ Đã lưu'",False,"không còn bé 'Chưa điểm' để thử")
     # G4: giao bé không bắt tick đối chiếu; thẻ có SĐT, 📞, nhắc chụp ảnh lần đón đầu
     g.goto(U+f"/pickups/handover/{aid}"); g.wait_for_timeout(3500); t=g.inner_text("body")
